@@ -2,54 +2,45 @@ from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import DetailView
 from shop.models import *
-
-menu = [
-    {'title': "Магазины", 'url_name': 'address'},
-    {'title': "Доставка", 'url_name': 'delivery'},
-    {'title': "Калькулятор", 'url_name': 'calc'}
-]
+from shop.utils import *
 
 
-class HomePage(TemplateView):
+class HomePage(DataMixin, TemplateView):
 
     template_name = 'shop/index.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
         context['title'] = 'Интернет-магазин SHOP - напольные покрытия в Челябинске '
-        return context
+        return dict(list(self.get_user_context().items()) + list(context.items()))
 
 
-class CatalogPage(ListView):
+class CatalogPage(DataMixin, ListView):
     model = Categories
     template_name = 'shop/category.html'
     context_object_name = 'categories'
 
     def get_context_data(self, object_list='None', *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
         context['title'] = 'Каталог напольных покрытий'
         context['products'] = Products.objects.all()
-        return context
+        return dict(list(self.get_user_context().items()) + list(context.items()))
 
 
 class CategoriesPage(CatalogPage):
 
     def get_context_data(self, *, object_list='None', **kwargs):
         context = super().get_context_data(**kwargs)
-        query_from_categories = get_object_or_404(Categories, slug=self.kwargs['cat_slug'])
+        query_from_categories = get_object_or_404(
+            Categories, slug=self.kwargs['cat_slug'])
         context['title'] = query_from_categories.title
-        context['menu'] = menu
-        context['products'] = Products.objects.filter(category__slug=self.kwargs['cat_slug'])
+        context['products'] = Products.objects.filter(
+            category__slug=self.kwargs['cat_slug'])
         context['cat_selected'] = query_from_categories.id
-        return context
-
-    # def get_queryset(self):
-    #     return Categories.objects.get(slug=self.kwargs['cat_slug'])
+        return dict(list(self.get_user_context().items()) + list(context.items()))
 
 
-class ProductDetail(DetailView):
+class ProductDetail(DataMixin, DetailView):
 
     model = Products
 
@@ -58,13 +49,8 @@ class ProductDetail(DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
         context['title'] = context['product'].title
-        return context
-
-
-
-
+        return dict(list(self.get_user_context().items()) + list(context.items()))
 
 
 def address(request):
