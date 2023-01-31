@@ -2,7 +2,6 @@ from django.db import models
 from django.urls import reverse
 
 
-
 # Модели для интернет магазина shop
 
 class Categories(models.Model):
@@ -16,13 +15,13 @@ class Categories(models.Model):
     status = models.BooleanField(default=True)
     slug = models.SlugField(max_length=255, unique=True,
                             db_index=True)
-
+    
     def __str__(self):
         return self.title
-
+    
     def get_absolute_url(self):
         return reverse('categories', kwargs={'cat_slug': self.slug})
-
+    
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
@@ -39,13 +38,13 @@ class Products(models.Model):
     category = models.ForeignKey(Categories, on_delete=models.PROTECT)
     slug = models.SlugField(max_length=255, unique=True,
                             db_index=True)
-
+    
     def __str__(self):
         return self.title
-
+    
     def get_absolute_url(self):
         return reverse('product_detail', kwargs={'slug': self.slug})
-
+    
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'

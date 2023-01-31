@@ -6,9 +6,8 @@ from shop.utils import *
 
 
 class HomePage(DataMixin, TemplateView):
-
     template_name = 'shop/index.html'
-
+    
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Интернет-магазин SHOP - напольные покрытия в Челябинске '
@@ -19,7 +18,7 @@ class CatalogPage(DataMixin, ListView):
     model = Categories
     template_name = 'shop/category.html'
     context_object_name = 'categories'
-
+    
     def get_context_data(self, object_list='None', *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Каталог напольных покрытий'
@@ -28,7 +27,7 @@ class CatalogPage(DataMixin, ListView):
 
 
 class CategoriesPage(CatalogPage):
-
+    
     def get_context_data(self, *, object_list='None', **kwargs):
         context = super().get_context_data(**kwargs)
         query_from_categories = get_object_or_404(
@@ -41,12 +40,11 @@ class CategoriesPage(CatalogPage):
 
 
 class ProductDetail(DataMixin, DetailView):
-
     model = Products
-
+    
     template_name = 'shop/product.html'
     context_object_name = 'product'
-
+    
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = context['product'].title
@@ -64,7 +62,6 @@ def delivery(request):
 def calc(request):
     return HttpResponse("Калькулятор")
 
-
 # def product_detail(request, product_slug):
 #     products_request = get_object_or_404(Products, slug=product_slug)
 
@@ -75,8 +72,8 @@ def calc(request):
 #     }
 
 #     return render(request, 'shop/product.html', context=context)
-    # def get_queryset(self):
-    #     return Products.objects.get(slug=self.kwargs['product_slug'])
+# def get_queryset(self):
+#     return Products.objects.get(slug=self.kwargs['product_slug'])
 
 # def request_all_from_categories():
 #     return Categories.objects.all()
